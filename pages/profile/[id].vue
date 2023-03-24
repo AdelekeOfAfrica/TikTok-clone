@@ -1,5 +1,6 @@
 <script setup>
 import MainLayout from '@/layouts/MainLayout.vue';
+const { $generalStore } = useNuxtApp();
 </script>
 
 <template>
@@ -12,7 +13,7 @@ import MainLayout from '@/layouts/MainLayout.vue';
                     Username
                 </div>
                 <div class="text-[18px] truncate">Username</div>
-                <button v-if="true" class="flex items-center rounded-md py-1.5 px-3.5 mt-3 text-[15px] font-semibold border hover:bg-gray-100" >
+                <button v-if="true" @click=" $event => $generalStore.isEditProfileOpen = true " class="flex items-center rounded-md py-1.5 px-3.5 mt-3 text-[15px] font-semibold border hover:bg-gray-100" >
                     <Icon class="mt-0.5 mr-1" name="mdi:pencil" size="18" />
                     <div>Edit Profile </div>
                 </button>
@@ -53,11 +54,11 @@ import MainLayout from '@/layouts/MainLayout.vue';
 
         <div class="mt-4 grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3">
             <PostUser />
-              <PostUser />
-                <PostUser />
-                  <PostUser />
-                    <PostUser />
-                      <PostUser />
+            <PostUser />
+            <PostUser />
+             <PostUser />
+            <PostUser />
+           
         </div>
     </div>
 </MainLayout>
