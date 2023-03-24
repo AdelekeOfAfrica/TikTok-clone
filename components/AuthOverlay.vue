@@ -1,4 +1,5 @@
 <script setup>
+const {$generalStore} = useNuxtApp();
 let isRegister = ref(null);
 
 </script>
@@ -6,11 +7,14 @@ let isRegister = ref(null);
 <template>
 <div id="Overlay" class="fixed flex items-center justify-center z-50 top-0 left-0 w-full h-full bg-black bg-opacity-50">
     <div class="relative bg-white w-full max-w-[470px] h-[90%] p-4 rounded-lg">
+        <!-- updating the close icon to close on click-->
         <div class="w-full flex justify-end">
-            <button class="p-1.5 rounded-full bg-gray-100">
+            <button @click="$generalStore.isLoginOpen = false" class="p-1.5 rounded-full bg-gray-100">
             <Icon name="mdi:close" size="36" />
             </button>
         </div>
+
+        <!-- end of update -->
 
         <Login v-if="isRegister" />
         <Register v-else />
