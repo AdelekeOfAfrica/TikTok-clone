@@ -1,8 +1,26 @@
 <script setup>
+const { $userStore, $generalStore } = useNuxtApp();
 
 let email =ref(null)
 let password = ref(null)
 let errors = ref(null)
+
+const login = async () => {
+     errors.value = null
+
+    try{
+        await $userStore.getTokens()
+        await $userStore.login(email.value, password.value)
+        await $userStore.getUser()
+
+        $generalStore.isLoginOpen = false
+      
+
+    } catch (error) {
+        console.log(error)
+          errors.value = error.response.data.errors;
+    }
+}
  
 </script>
 
@@ -15,21 +33,25 @@ let errors = ref(null)
          v-model:input="email" 
          inputType="email" 
          :autoFocus="true" 
-         error="" />
+        :error="errors && errors.email ? errors.email[0] : ''" />
         <span v-if="error" class="text-red-300 text-[14px] font-semibold">{{ error }}</span>
     </div>
  
     <div class="px-6 pb-1.5 text-[15px]"> Password </div>
     <div class="px-6 pb-2 ">
-        <TextInput placeholder="Password" v-model:input="password" inputType="password" />
+        <TextInput placeholder="Password" v-model:input="password" inputType="password" :autoFocus="true" 
+        :error="errors && errors.password ? errors.password[0] : ''" />
+    <span v-if="error" class="text-red-300 text-[14px] font-semibold">{{ error }}</span>
     </div>
 
     <div class="px-6 text-[12px] text-gray-600"> Forgot Password ? </div>
-
+<!-- removed the disable function here-->
     <div class="px-6 pb-2 mt-6">
-        <button :disabled="(!email || !password)"
-        :class="(!email || !password) ? 'bg-gray-200' : 'bg-[#f02c56]'"
+       
+        <button :disabled="(!email || !password)" 
+        :class="(!email || !password) ? 'bg-gray-200' : 'bg-[#f02c56]'" 
         @click="$event => login()"
         class="w-full text-[17px] font-semibold text-white py-3 rounded-sm">Login</button>
     </div>
+<!-- end of update -->
 </template>

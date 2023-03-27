@@ -1,9 +1,26 @@
 <script setup>
+const {$userStore, $generalStore} = useNuxtApp();
 let name = ref(null)
 let email =ref(null)
 let confirmPassword = ref(null)
 let password = ref(null)
 let errors = ref(null)
+
+const register = async() => {
+     errors.value = null
+
+    try{
+        await $userStore.getTokens()
+        await $userStore.register(name.value, email.value, password.value, confirmPassword.value);
+        await $userStore.getUser()
+
+        $generalStore.isLoginOpen = false
+        console.log(res)
+    } catch (error) {
+        console.log(error)
+        errors.value = error.response.data.errors;
+    }
+}
  
 </script>
 
@@ -15,7 +32,7 @@ let errors = ref(null)
          v-model:input="name" 
          inputType="text" 
          :autoFocus="true" 
-         error="" />
+         :error="errors && errors.name ? errors.name[0] : ''" />
         <span v-if="error" class="text-red-300 text-[14px] font-semibold">{{ error }}</span>
     </div>
 
@@ -24,7 +41,7 @@ let errors = ref(null)
          v-model:input="email" 
          inputType="email" 
          :autoFocus="true" 
-         error="" />
+         :error="errors && errors.email ? errors.email[0] : ''"  />
         <span v-if="error" class="text-red-300 text-[14px] font-semibold">{{ error }}</span>
     </div>
 
@@ -33,12 +50,13 @@ let errors = ref(null)
          v-model:input="password" 
          inputType="password" 
          :autoFocus="true" 
-         error="" />
+         :error="errors && errors.password ? errors.password[0] : ''" />
         <span v-if="error" class="text-red-300 text-[14px] font-semibold">{{ error }}</span>
     </div>
  
     <div class="px-6 pb-2 ">
-        <TextInput placeholder="Confirm Password" v-model:input="confirmPassword" inputType="password" />
+        <TextInput placeholder="Confirm Password" v-model:input="confirmPassword" inputType="password"  :autoFocus="true" 
+         :error="errors && errors.confirmPassword ? errors.confirmPassword[0] : ''" />
         <span v-if="error" class="text-red-300 text-[14px] font-semibold">{{ error }}</span>
     </div>
 

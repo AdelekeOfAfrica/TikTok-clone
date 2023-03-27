@@ -3,6 +3,35 @@ const {$userStore, $generalStore} = useNuxtApp();
 const route = useRoute(); 
 let showMenu = ref(false);
 
+const router = useRouter();
+
+onMounted(() => {
+    document.addEventListener('mouseup', function (e) {
+
+        let popupMenu = document.getElementById('PopupMenu');
+        if (!popupMenu.contains(e.target)) {
+            showMenu.value= false;
+        }
+
+    })
+})
+
+const isLoggedIn = () =>{
+    if($userStore.id){
+        router.push('/upload')
+    } else{
+        $generalStore.isLoginOpen = true
+    }
+}
+
+const logout = () => {
+    try {
+        $userStore.logout()
+        router.push('/')
+    } catch (error) {
+        console.log(error)
+    }
+}
 </script>
 
 <template>
@@ -22,7 +51,9 @@ let showMenu = ref(false);
             </div>
 
             <div class="flex items-center justify-end gap-3 min-w-[275px] max-w-[320px] w-full">
-                <button class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100">
+                <button
+                    @click="$event => isLoggedIn()" 
+                    class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100">
                     <Icon name="mdi:plus" color="#000000" size="22" />
                     <span class="px-2 font-medium text-[15px]">Upload</span>
                 </button>
@@ -43,16 +74,17 @@ let showMenu = ref(false);
 
                 <div class="relative">
                     <button class= "mt-1"  @click="$event=>showMenu =!showMenu">
-                        <img class="rounded-full" width="33" src="https://picsum.photos/id/83/300/320" />
+                        <img class="rounded-full" width="33" :src="$userStore.image" />
+
                     </button>
 
-                    <div v-if="showMenu" id="popupmenu" class="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl border top-[43px] -right-2">
-                        <NuxtLink @click ="$event =>showMenu = false" class="flex items-center justify-start py-3 px-2 hover:bg-gray-100 cursor-pointer">
+                    <div v-if="showMenu" id="PopupMenu" class="absolute bg-white rounded-lg py-1.5 w-[200px] shadow-xl border top-[43px] -right-2">
+                        <NuxtLink :to="`/profile/${$userStore.id}`" @click ="$event =>showMenu = false" class="flex items-center justify-start py-3 px-2 hover:bg-gray-100 cursor-pointer">
                             <Icon name="ph:user" size="20" />
                             <span class="pl-2 font-semibold text-sm">Profile</span>
                         </NuxtLink>
 
-                         <div class="flex items-center justify-start border-t py-3 px-1.5 hover:bg-gray-100 cursor-pointer">
+                         <div @click="$event =>logout()" class="flex items-center justify-start border-t py-3 px-1.5 hover:bg-gray-100 cursor-pointer">
                             <Icon name="ic:outline-login" size="20" />
                             <span class="pl-2 font-semibold text-sm">Log out</span>
                         </div>
