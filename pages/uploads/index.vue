@@ -1,12 +1,17 @@
 <script setup>
 import UploadLayout from '@/layouts/UploadLayout.vue';
+
+
+const { $userStore } = useNuxtApp();
+const router = useRouter();
+
 let file = ref(null);
 let fileDisplay=ref(null);
 let errorType=ref(null);
 let caption=ref('');
 let fileData = ref(null);
 let errors = ref(null);
-let isUploading = ref(false);
+let isUpLoading = ref(false);
 
 watch(() =>caption.value, (caption) =>{
     if(caption.length >=150){
@@ -45,6 +50,33 @@ const discard = () =>{  //thisis to discard a video //
     caption.value = '';
 }
 
+// this is being fetched from createPost in user.js to post a video and check if it is not empty//
+const createPost = async () =>{
+    errors.value = null;
+
+    let data = new FormData();
+    data.append('video', fileData.value || '');
+    data.append('text', caption.value || '');
+
+    if (fileData.value && caption.value){
+        isUpLoading.value = true;
+    }
+
+    try{
+        let res = await $userStore.createPost(data)
+        if (res.status === 200) {
+            setTimeout(() => {
+                router.push('/profile/' + $userStore.id)
+                isUpLoading.value = false
+            }, 1000)
+        }
+
+    } catch (error) {
+        errors.value = error.response.data.errors;
+        isUpLoading.value = false;
+    }
+}
+//end of checking //
 const clearVideo = () =>{
     file.value=null;
     fileDisplay.value = null;
@@ -56,6 +88,14 @@ const clearVideo = () =>{
 
 <template>
 <uploadError :errorType="errorType" /> <!-- new component-->
+ <!--  this is to check if video has being uploaded -->
+  <div 
+        v-if="isUpLoading"
+        class="fixed flex items-center justify-center top-0 left-0 w-full h-screen bg-black z-50 bg-opacity-50"
+    >
+        <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#FFFFFF"/>
+    </div>
+    <!-- end of  this is to check if video has being uploaded -->
     <UploadLayout>
         <div class="w-full mt-[80px] mb-[40px] bg-white shadow-lg rounded-md py-6 md:px-10 px-4">
             <div>
@@ -117,8 +157,19 @@ const clearVideo = () =>{
                         <input v-model = "caption" type="text" maxlength="150" class="w-full border p-2.5 rounded-md focus:outline-none"/>
                         <div class="flex gap-3">
                             <button @click="$event=>discard()" class="px-10 py-2.5 mt-8 border text-[16px] hover:bg-gray-100 rounded-sm"> Discard </button>
-                             <button class="px-10 py-2.5 mt-8 border text-[16px] text-white bg-[#f02c56] rounded-sm"> Post </button>
+                             <button  @click="$event=>createPost()" class="px-10 py-2.5 mt-8 border text-[16px] text-white bg-[#f02c56] rounded-sm"> Post </button>
                         </div>
+                        <!-- displaying of erros  -->
+                        <div class="mt-4">
+                             <div class="text-red-600" v-if="errors && errors.video">
+                                {{ errors.video[0] }}
+                            </div>
+                            <div class="text-red-600" v-if="errors && errors.text">
+                                {{ errors.text[0] }}
+                            </div>
+                        </div>
+                        <!-- ending of displaying of errors -->
+
                     </div>
                 </div>
              </div>

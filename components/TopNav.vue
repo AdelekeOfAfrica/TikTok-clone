@@ -18,7 +18,7 @@ onMounted(() => {
 
 const isLoggedIn = () =>{
     if($userStore.id){
-        router.push('/upload')
+        router.push('/uploads')
     } else{
         $generalStore.isLoginOpen = true
     }
