@@ -32,7 +32,7 @@
                                 <img 
                                     class="rounded-full" 
                                     width="95" 
-                                    src="https://picsum.photos/id/8/300/320"
+                                    :src="userImage"
                                 >
                                 <div class="absolute bottom-0 right-0 rounded-full bg-white shadow-xl border p-1 border-gray-300 inline-block w-[32px]">
                                     <Icon name="ph:pencil-simple-line-bold" size="17" class="-mt-1 ml-0.5"/>

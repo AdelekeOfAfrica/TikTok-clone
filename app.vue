@@ -10,6 +10,8 @@ onMounted(async () => {
     isEditProfileOpen.value = false
     try{
         await $generalStore.hasSessionExpired()
+        await $generalStore.getRandomUsers('suggested')
+        await $generalStore.getRandomUsers('following')
 
         if ($userStore.id){
             $userStore.getUser();

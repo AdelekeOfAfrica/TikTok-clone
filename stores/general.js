@@ -26,6 +26,14 @@ export const useGeneralStore = defineStore('general', {
             document.body.style.overflow ='visible';
         },
 
+        allLowerCaseNoCaps(str) {
+            return str.split(' ').join('').toLowerCase()
+          },
+
+          setBackUrl(url) {
+            this.isBackUrl = url
+        },
+
     async hasSessionExpired () {
 
         await $axios.interceptors.response.use((response) => {
@@ -51,7 +59,32 @@ export const useGeneralStore = defineStore('general', {
             }
         })
 
-    }
+    },
+    async getRandomUsers(type) {
+        let res = await $axios.get(`/api/get-random-users`)
+  
+        if (type === 'suggested') {
+          this.suggested = res.data.suggested
+        }
+  
+        if (type === 'following') {
+          this.following = res.data.following
+        }
+      },
+
+    updateSideMenuImage(array, user) {
+        for (let i = 0; i < array.length; i++) {
+          const res = array[i];
+          if (res.id == user.id) {
+              res.image = user.image
+          }
+        }
+      },
+  
+      async getAllUsersAndPosts() {
+        let res = await $axios.get('/api/home')
+        this.posts = res.data
+      },
     
       },
       persist:true
