@@ -13,6 +13,8 @@ const register = async() => {
         await $userStore.getTokens()
         await $userStore.register(name.value, email.value, password.value, confirmPassword.value);
         await $userStore.getUser()
+        await $generalStore.getRandomUsers('suggested')
+        await $generalStore.getRandomUsers('following')
 
         $generalStore.isLoginOpen = false
         console.log(res)
